@@ -1,0 +1,27 @@
+[project]
+name = "todo-app"
+version = "0.1.0"
+description = "The Evolution of Todo — From CLI to Cloud-Native AI System"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pyjwt[crypto]>=2.12.1",
+]
+
+[project.scripts]
+todo = "src.main:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.uv.workspace]
+members = [
+    "backend",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.0.2",
+]
