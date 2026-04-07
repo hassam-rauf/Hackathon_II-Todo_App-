@@ -1,5 +1,5 @@
 /**
- * Create task form — title required, description optional.
+ * Create task form — dark glass theme.
  * Task: T-027
  */
 
@@ -16,6 +16,7 @@ export default function TaskForm({ onSubmit }: TaskFormProps) {
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -33,6 +34,7 @@ export default function TaskForm({ onSubmit }: TaskFormProps) {
       await onSubmit(trimmed, description.trim() || undefined);
       setTitle("");
       setDescription("");
+      setExpanded(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create task");
     } finally {
@@ -41,49 +43,46 @@ export default function TaskForm({ onSubmit }: TaskFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200/50 shadow-sm p-5 mb-6">
+    <form onSubmit={handleSubmit} className="glass-card p-5 mb-6">
       <div className="flex flex-col gap-3">
-        <div>
-          <label htmlFor="task-title" className="block text-sm font-medium text-gray-700 mb-1.5">
-            Title *
-          </label>
+        <div className="flex gap-3">
           <input
-            id="task-title"
             type="text"
             placeholder="What needs to be done?"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none transition-all"
+            onFocus={() => setExpanded(true)}
+            className="glass-input flex-1 px-4 py-2.5"
             maxLength={200}
             aria-required="true"
+            aria-label="Task title"
           />
+          <button
+            type="submit"
+            disabled={submitting}
+            className="bg-emerald-500 hover:bg-emerald-400 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/10 font-medium text-sm flex items-center gap-2 flex-shrink-0"
+            aria-label="Add task"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            {submitting ? "Adding..." : "New Task"}
+          </button>
         </div>
 
-        <div>
-          <label htmlFor="task-description" className="block text-sm font-medium text-gray-700 mb-1.5">
-            Description
-          </label>
+        {expanded && (
           <textarea
-            id="task-description"
             placeholder="Add details (optional)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none resize-none transition-all"
+            className="glass-input w-full px-4 py-2.5 resize-none"
             rows={2}
             maxLength={1000}
+            aria-label="Task description"
           />
-        </div>
+        )}
 
-        {error && <p className="text-red-600 text-sm" role="alert">{error}</p>}
-
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full sm:w-auto self-end bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-6 py-2.5 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md font-medium"
-          aria-label="Add task"
-        >
-          {submitting ? "Adding..." : "Add Task"}
-        </button>
+        {error && <p className="text-red-400 text-sm" role="alert">{error}</p>}
       </div>
     </form>
   );

@@ -1,7 +1,7 @@
 # Project Progress — The Evolution of Todo
 
-**Last Updated**: 2026-04-06
-**Current Phase**: Phase II — UI Upgrade COMPLETE
+**Last Updated**: 2026-04-07
+**Current Phase**: Phase II — UI Redesign (Space Theme) COMPLETE
 **Next Action**: Phase III — AI-Powered Todo Chatbot
 
 ---
@@ -150,50 +150,61 @@ tests/backend/
 - **Dashboard**: Authenticated at `/dashboard` with stats overview (total, completed, pending, rate)
 - **Auth pages**: Glassmorphism frosted cards on gradient background
 
+**Verified working (2026-04-06):**
+- Full auth flow: signup → signin → dashboard → add/edit/delete tasks
+
+---
+
+### Cycle 5: UI Redesign — Dark Space/Galaxy Theme — COMPLETE ✅
+
+**Design decisions** (user-approved 2026-04-07):
+- **Style**: Dark space/galaxy theme — star-filled backgrounds, nebula glows, dark glassmorphism cards
+- **Colors**: Deep space dark (#0a0a1a), purple/violet nebula accents, emerald green CTAs
+- **Landing**: Space background, laptop mockup with dashboard preview, "Organize your life. Focus on what matters." hero
+- **Dashboard**: Sidebar navigation (Dashboard/My Todos/Settings), 3-stat bar, productivity chart, quick notes widget
+- **Auth pages**: Dark glass cards on space background, emerald buttons, purple accent links
+
 **Completed tasks:**
 | # | Task | Status |
 |---|------|--------|
-| 1 | Create `glassmorphism-todo-ui` skill (via skill-creator-pro) | ✅ Done |
-| 2 | Build public landing page at `/` | ✅ Done |
-| 3 | Redesign sign-in and sign-up pages | ✅ Done |
-| 4 | Build member dashboard at `/dashboard` | ✅ Done |
-| 5 | Add auth middleware for route protection | ✅ Done |
+| 1 | Redesign globals.css with space theme (stars, nebula, glass utilities) | ✅ Done |
+| 2 | Redesign landing page with laptop mockup + green CTA | ✅ Done |
+| 3 | Redesign dashboard with sidebar + productivity chart | ✅ Done |
+| 4 | Create ProductivityChart component (circular progress ring) | ✅ Done |
+| 5 | Redesign sign-in/sign-up pages for space theme | ✅ Done |
+| 6 | Update all components (TaskCard, TaskForm, StatsBar, EmptyState) for dark theme | ✅ Done |
+| 7 | Update loading.tsx and error.tsx for dark theme | ✅ Done |
 
-**Route structure (final):**
-- `/` → Public landing page (hero, 3 feature cards, CTA buttons, footer)
-- `/signin` → Glassmorphism sign-in (frosted glass card on gradient)
-- `/signup` → Glassmorphism sign-up (frosted glass card on gradient)
-- `/dashboard` → Authenticated dashboard (stats bar + task CRUD)
+**Route structure (unchanged):**
+- `/` → Public landing page (space bg, hero, laptop mockup, features, green CTA)
+- `/signin` → Dark glass sign-in (space bg, emerald button)
+- `/signup` → Dark glass sign-up (space bg, emerald button)
+- `/dashboard` → Authenticated dashboard (sidebar, stats, tasks, productivity chart, quick notes)
 - `middleware.ts` → Redirects: `/dashboard` → `/signin` if no auth; `/signin|/signup` → `/dashboard` if already auth
 
 **Files created/modified:**
 ```
-.claude/skills/glassmorphism-todo-ui/   ← NEW reusable skill (+200 bonus)
-├── SKILL.md
-└── references/patterns.md
-
 frontend/
-├── app/page.tsx              ← REWRITTEN → public landing page
-├── app/dashboard/page.tsx    ← NEW → stats + task management
-├── app/signin/page.tsx       ← REWRITTEN → glassmorphism style
-├── app/signup/page.tsx       ← REWRITTEN → glassmorphism style
-├── app/globals.css           ← UPDATED → fade-in animations
-├── components/StatsBar.tsx   ← NEW → 4 stat cards (total/completed/pending/rate)
-├── components/EmptyState.tsx ← UPGRADED → icon + better styling
-├── components/TaskForm.tsx   ← UPGRADED → gradient buttons, refined inputs
-├── components/TaskCard.tsx   ← UPGRADED → gradient checkbox, hover effects
-└── middleware.ts             ← NEW → auth route protection
+├── app/globals.css           ← REWRITTEN → space-bg, stars, glass-card, glass-input, sidebar-item, circular-progress
+├── app/page.tsx              ← REWRITTEN → space theme landing with laptop mockup
+├── app/dashboard/page.tsx    ← REWRITTEN → sidebar layout + productivity chart + quick notes
+├── app/signin/page.tsx       ← REWRITTEN → dark space theme
+├── app/signup/page.tsx       ← REWRITTEN → dark space theme
+├── app/loading.tsx           ← UPDATED → space-bg spinner
+├── app/error.tsx             ← UPDATED → space-bg error boundary
+├── components/ProductivityChart.tsx  ← NEW → circular progress ring with gradient + legend
+├── components/StatsBar.tsx   ← REWRITTEN → dark glass stat cards with icons
+├── components/TaskCard.tsx   ← REWRITTEN → dark glass card, emerald checkbox, purple edit
+├── components/TaskForm.tsx   ← REWRITTEN → glass-input, emerald "+ New Task" button
+├── components/EmptyState.tsx ← REWRITTEN → dark theme empty state
+└── components/TaskList.tsx   ← No changes (wrapper only)
 ```
 
-**Verified working (2026-04-06):**
-- Landing page: 200 OK
-- Sign-in: 200 OK
-- Sign-up: 200 OK
-- Dashboard (no auth): 307 redirect → /signin (correct)
-- Auth API: 200 OK
-- JWKS endpoint: EdDSA key served
-- Backend health: `{"status":"ok"}`
-- Full auth flow: signup → signin → dashboard → add/edit/delete tasks
+**Build**: `npx next build` — compiles successfully (Turbopack, 0 errors)
+
+**Git**: Initial commit pushed to GitHub (2026-04-07)
+- Repo: https://github.com/hassam-rauf/Hackathon_II-Todo_App-
+- Commit: `feat: Complete Phase I + Phase II` (125 files, 27,443 lines)
 
 ---
 
@@ -201,13 +212,16 @@ frontend/
 
 ```
 Read progress.md first, then:
-1. Phase II FULLY COMPLETE — all 4 cycles done (API, UI, Auth, Glassmorphism UI)
+1. Phase II FULLY COMPLETE — all 5 cycles done (API, UI, Auth, Glassmorphism, Space Theme)
 2. Next: Phase III — AI-Powered Todo Chatbot (see AGENT.md Section 16)
-3. Both servers: backend on :8000, frontend on :3000
+3. Both servers: backend on :8000 (run from project root), frontend on :3000
 4. Neon DB connected (SSL, no channel_binding)
 5. Auth uses EdDSA/JWKS — backend/auth.py fetches JWKS from frontend
 6. Routes: / (landing), /signin, /signup, /dashboard (protected)
 7. 5 reusable skills created (4 Phase II + glassmorphism-todo-ui)
+8. GitHub repo: https://github.com/hassam-rauf/Hackathon_II-Todo_App-
+9. UI theme: Dark space/galaxy with stars, nebula glows, dark glassmorphism
+10. Backend run cmd: uv run uvicorn backend.main:app --reload (from project root)
 ```
 
 ---
@@ -272,4 +286,4 @@ Read progress.md first, then:
 - skill-creator-pro used for reusable skills (+200 bonus points)
 - Phase-by-phase, no skipping
 - Save progress before closing sessions
-- UI style preference: Modern Glassmorphism, Blue → Indigo gradient
+- UI style preference: Dark space/galaxy theme (redesigned from glassmorphism 2026-04-07)

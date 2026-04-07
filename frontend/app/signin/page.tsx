@@ -1,5 +1,5 @@
 /**
- * Signin page — glassmorphism style.
+ * Signin page — dark space theme.
  * Task: T-036
  */
 
@@ -36,38 +36,40 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 flex items-center justify-center px-4 relative overflow-hidden">
-      {/* Decorative blobs */}
-      <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl" />
-      <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-400/20 rounded-full blur-3xl" />
+    <div className="min-h-screen space-bg flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Stars */}
+      <div className="fixed inset-0 stars pointer-events-none" />
+
+      {/* Nebula glows */}
+      <div className="absolute top-1/4 -left-40 w-80 h-80 bg-purple-600/10 rounded-full blur-[120px]" />
+      <div className="absolute bottom-1/4 -right-40 w-80 h-80 bg-blue-600/10 rounded-full blur-[120px]" />
 
       <div className="w-full max-w-md relative z-10 animate-fade-in-scale">
         {/* Branding */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <span className="text-2xl font-bold text-white">TodoApp</span>
+            <svg className="w-7 h-7 text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm6 7l2 2 4-4" />
+              <path fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
+            </svg>
+            <span className="text-2xl font-bold text-white">ToDo</span>
           </Link>
-          <p className="text-white/50 mt-2 text-sm">Welcome back</p>
+          <p className="text-white/30 mt-2 text-sm">Welcome back</p>
         </div>
 
         {/* Glass Card */}
-        <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl p-8">
+        <div className="glass-card shadow-2xl p-8">
           <h2 className="text-2xl font-semibold text-white mb-6">Sign In</h2>
 
           {error && (
-            <div className="bg-red-500/20 border border-red-400/30 rounded-lg px-4 py-3 mb-6" role="alert">
-              <p className="text-red-200 text-sm">{error}</p>
+            <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 mb-6" role="alert">
+              <p className="text-red-400 text-sm">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-white/50 mb-2">
                 Email
               </label>
               <input
@@ -76,14 +78,14 @@ export default function SignInPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:ring-2 focus:ring-white/30 focus:border-transparent outline-none transition-all"
+                className="glass-input w-full px-4 py-3"
                 placeholder="you@example.com"
                 aria-label="Email address"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-white/50 mb-2">
                 Password
               </label>
               <input
@@ -92,7 +94,7 @@ export default function SignInPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:ring-2 focus:ring-white/30 focus:border-transparent outline-none transition-all"
+                className="glass-input w-full px-4 py-3"
                 placeholder="Enter your password"
                 aria-label="Password"
               />
@@ -101,7 +103,7 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-white text-blue-700 font-semibold py-3 rounded-xl hover:bg-white/90 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              className="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/15 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
               aria-label="Sign in"
             >
               {loading ? (
@@ -119,10 +121,9 @@ export default function SignInPage() {
           </form>
         </div>
 
-        {/* Link to signup */}
-        <p className="text-white/50 text-center mt-6 text-sm">
+        <p className="text-white/30 text-center mt-6 text-sm">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-white font-medium hover:underline">
+          <Link href="/signup" className="text-purple-400 font-medium hover:text-purple-300 transition-colors">
             Sign up
           </Link>
         </p>

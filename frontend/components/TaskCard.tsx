@@ -1,5 +1,5 @@
 /**
- * Single task card with toggle, edit, delete actions.
+ * Single task card — dark glass theme with toggle, edit, delete actions.
  * Tasks: T-028, T-029, T-030
  */
 
@@ -63,19 +63,19 @@ export default function TaskCard({ task, onToggle, onDelete, onUpdate }: TaskCar
 
   if (editing) {
     return (
-      <div className="bg-white border-2 border-blue-300/50 rounded-xl shadow-sm p-4">
+      <div className="glass-card border-purple-500/30 p-4">
         <input
           type="text"
           value={editTitle}
           onChange={(e) => setEditTitle(e.target.value)}
-          className="w-full border border-gray-200 rounded-lg px-4 py-2.5 mb-2 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none"
+          className="glass-input w-full px-4 py-2.5 mb-2"
           maxLength={200}
           aria-label="Edit task title"
         />
         <textarea
           value={editDescription}
           onChange={(e) => setEditDescription(e.target.value)}
-          className="w-full border border-gray-200 rounded-lg px-4 py-2.5 mb-3 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none resize-none"
+          className="glass-input w-full px-4 py-2.5 mb-3 resize-none"
           rows={2}
           maxLength={1000}
           placeholder="Description (optional)"
@@ -84,14 +84,14 @@ export default function TaskCard({ task, onToggle, onDelete, onUpdate }: TaskCar
         <div className="flex gap-2 justify-end">
           <button
             onClick={handleCancel}
-            className="px-4 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+            className="px-4 py-1.5 text-sm bg-white/5 hover:bg-white/10 text-white/60 rounded-lg transition-colors border border-white/10"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={loading || !editTitle.trim()}
-            className="px-4 py-1.5 text-sm bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-lg transition-all disabled:opacity-50"
+            className="px-4 py-1.5 text-sm bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded-lg transition-all disabled:opacity-50 border border-purple-500/20"
           >
             {loading ? "Saving..." : "Save"}
           </button>
@@ -101,14 +101,14 @@ export default function TaskCard({ task, onToggle, onDelete, onUpdate }: TaskCar
   }
 
   return (
-    <div className={`bg-white border border-gray-200/50 rounded-xl shadow-sm p-4 flex items-start gap-3 transition-all hover:shadow-md ${loading ? "opacity-50" : ""}`}>
+    <div className={`glass-card glass-card-hover p-4 flex items-start gap-3 transition-all ${loading ? "opacity-50" : ""}`}>
       <button
         onClick={handleToggle}
         disabled={loading}
         className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
           task.completed
-            ? "bg-gradient-to-br from-blue-500 to-indigo-500 border-transparent"
-            : "border-gray-300 hover:border-blue-400"
+            ? "bg-emerald-500 border-emerald-500"
+            : "border-white/20 hover:border-purple-400"
         }`}
         aria-label={task.completed ? "Mark as pending" : "Mark as completed"}
       >
@@ -120,22 +120,22 @@ export default function TaskCard({ task, onToggle, onDelete, onUpdate }: TaskCar
       </button>
 
       <div className="flex-1 min-w-0">
-        <h3 className={`font-medium ${task.completed ? "line-through text-gray-400" : "text-gray-900"}`}>
+        <h3 className={`font-medium ${task.completed ? "line-through text-white/30" : "text-white/90"}`}>
           {task.title}
         </h3>
         {task.description && (
-          <p className={`text-sm mt-1 ${task.completed ? "text-gray-300 line-through" : "text-gray-500"}`}>
+          <p className={`text-sm mt-1 ${task.completed ? "text-white/15 line-through" : "text-white/40"}`}>
             {task.description}
           </p>
         )}
-        <p className="text-xs text-gray-400 mt-2">{date}</p>
+        <p className="text-xs text-white/20 mt-2">{date}</p>
       </div>
 
       <div className="flex gap-1 flex-shrink-0">
         <button
           onClick={() => setEditing(true)}
           disabled={loading}
-          className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors rounded-md hover:bg-blue-50"
+          className="p-1.5 text-white/20 hover:text-purple-400 transition-colors rounded-md hover:bg-white/5"
           aria-label="Edit task"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,7 +145,7 @@ export default function TaskCard({ task, onToggle, onDelete, onUpdate }: TaskCar
         <button
           onClick={handleDelete}
           disabled={loading}
-          className="p-1.5 text-gray-400 hover:text-red-600 transition-colors rounded-md hover:bg-red-50"
+          className="p-1.5 text-white/20 hover:text-red-400 transition-colors rounded-md hover:bg-red-500/10"
           aria-label="Delete task"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
