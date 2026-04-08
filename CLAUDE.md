@@ -208,3 +208,10 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 
 ## Code Standards
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+
+## Active Technologies
+- Python 3.13+ + FastAPI, SQLModel, OpenAI SDK (schemas only — no API calls in this cycle) (001-mcp-server-tools)
+- Neon Serverless PostgreSQL (production), SQLite in-memory (tests) (001-mcp-server-tools)
+
+## Recent Changes
+- 001-mcp-server-tools: Added Python 3.13+ + FastAPI, SQLModel, OpenAI SDK (schemas only — no API calls in this cycle)
