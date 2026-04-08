@@ -1,8 +1,8 @@
 # Project Progress — The Evolution of Todo
 
 **Last Updated**: 2026-04-08
-**Current Phase**: Phase III — AI-Powered Todo Chatbot (Cycle 2 COMPLETE)
-**Next Action**: Phase III Cycle 3 — ChatKit Frontend
+**Current Phase**: Phase III — AI-Powered Todo Chatbot (Cycle 3 COMPLETE)
+**Next Action**: Commit + PR for Phase III, then Phase IV — Kubernetes
 
 ---
 
@@ -285,7 +285,53 @@ backend/
 
 ---
 
-### Cycle 3: ChatKit Frontend (T-061 → T-070) — PENDING
+### Cycle 3: ChatKit Frontend (T-061 → T-070) — COMPLETE ✅
+
+**Branch**: `003-chatkit-frontend`
+**SDD progress**: /sp.specify ✅ | /sp.plan ✅ | /sp.tasks ✅ (17/17 tasks done) | /sp.analyze ✅ | /sp.implement ✅
+
+**Files created:**
+```
+backend/
+└── routes/
+    └── conversations.py     ← GET /api/{user_id}/conversations, GET .../messages
+
+frontend/
+├── components/
+│   ├── ChatPanel.tsx         ← Slide-in chat panel container
+│   ├── ChatMessages.tsx      ← Message bubbles + tool chips + typing indicator
+│   ├── ChatInput.tsx         ← Textarea + send button (Enter/Shift+Enter)
+│   ├── ChatConversationSelector.tsx  ← Conversation dropdown (new + history)
+│   └── ToolCallChip.tsx      ← Tool call indicator chips (5 tool types + error)
+├── lib/
+│   └── api.ts               ← Added: sendChatMessage, getConversations, getMessages + TS interfaces
+└── app/
+    ├── globals.css           ← Added: slide-in animation, chat bubbles, tool chips, typing dots
+    └── dashboard/
+        └── page.tsx          ← Added: AI Chat sidebar button, FAB, ChatPanel integration
+
+tests/backend/
+└── test_conversations.py     ← 11 tests (list conversations, load messages, ownership, not found)
+```
+
+**Files modified:**
+```
+backend/main.py               ← Registered conversations router
+```
+
+**Tests**: 11 conversations + 15 chat + 21 MCP + 11 auth + 20 API + 32 Phase 1 = **110 total tests passing**
+**Build**: `npx next build` — compiled successfully (Turbopack, 0 errors)
+**Key details**:
+- Custom React chat components (not OpenAI ChatKit — justified in plan)
+- Slide-in panel from right (w-96 desktop, full-width mobile overlay)
+- Dark space/galaxy theme: glass-card panel, emerald user bubbles, purple assistant bubbles
+- Tool call chips with per-tool icons (✓ add/complete, 🗑 delete, ✏ update, 📋 list)
+- Conversation selector dropdown with preview snippets + relative time
+- Auto-scroll, typing indicator dots, inline error with retry
+- Task list auto-refresh via onTasksChanged callback when agent uses tools
+- Mobile FAB (floating action button) for chat toggle
+- Enter to send, Shift+Enter for newline
+- All API calls use Bearer JWT auth
 
 ---
 
@@ -294,13 +340,13 @@ backend/
 ```
 Read progress.md first, then:
 1. Phase III Cycle 1 COMPLETE — MCP tools implemented + tested
-2. Phase III Cycle 2 COMPLETE — AI agent + chat endpoint implemented + tested (99 total tests)
-3. NEXT: Phase III Cycle 3 — ChatKit Frontend (chat UI)
-4. BRANCH: create new branch from 002-ai-chat-endpoint
-5. Backend chat endpoint ready: POST /api/{user_id}/chat
-6. Agent module at: backend/agent.py (tool-calling loop, fallback)
-7. MCP tools at: backend/mcp/ (5 tools)
-8. Tests: 99 total passing (15 chat + 21 MCP + 11 auth + 20 API + 32 Phase 1)
+2. Phase III Cycle 2 COMPLETE — AI agent + chat endpoint implemented + tested
+3. Phase III Cycle 3 COMPLETE — ChatKit frontend implemented (110 total tests)
+4. NEXT: Phase III complete — commit + PR, then Phase IV (Kubernetes)
+5. BRANCH: 003-chatkit-frontend (needs commit + merge)
+6. Chat UI at: frontend/components/Chat*.tsx (5 components)
+7. Backend conversation endpoints at: backend/routes/conversations.py
+8. Tests: 110 total passing (11 conv + 15 chat + 21 MCP + 11 auth + 20 API + 32 Phase 1)
 9. OpenAI API key NOT available — agent returns fallback, tests mock everything
 10. 6 reusable skills (5 Phase II + mcp-server-builder)
 11. GitHub: https://github.com/hassam-rauf/Hackathon_II-Todo_App-

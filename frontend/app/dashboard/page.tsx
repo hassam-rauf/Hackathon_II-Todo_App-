@@ -13,6 +13,7 @@ import TaskForm from "@/components/TaskForm";
 import TaskList from "@/components/TaskList";
 import StatsBar from "@/components/StatsBar";
 import ProductivityChart from "@/components/ProductivityChart";
+import ChatPanel from "@/components/ChatPanel";
 
 export default function DashboardPage() {
   const { data: session, isPending } = useAuth();
@@ -21,6 +22,7 @@ export default function DashboardPage() {
   const [error, setError] = useState("");
   const [authChecked, setAuthChecked] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [chatOpen, setChatOpen] = useState(false);
 
   const userId = session?.user?.id;
   const userName = session?.user?.name || session?.user?.email?.split("@")[0] || "User";
@@ -144,6 +146,16 @@ export default function DashboardPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
               My Todos
+            </button>
+            <button
+              onClick={() => setChatOpen(true)}
+              className={`sidebar-item ${chatOpen ? "active" : ""}`}
+              aria-label="Open AI Chat"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+              AI Chat
             </button>
             <button
               onClick={() => setActiveTab("settings")}
@@ -294,6 +306,29 @@ export default function DashboardPage() {
           </div>
         </main>
       </div>
+
+      {/* Mobile FAB — AI Chat toggle */}
+      {!chatOpen && (
+        <button
+          onClick={() => setChatOpen(true)}
+          className="fixed bottom-6 right-6 z-30 md:hidden w-14 h-14 rounded-full bg-emerald-500/80 hover:bg-emerald-500 shadow-lg shadow-emerald-500/20 flex items-center justify-center transition-all"
+          aria-label="Open AI Chat"
+        >
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          </svg>
+        </button>
+      )}
+
+      {/* Chat Panel */}
+      {userId && (
+        <ChatPanel
+          isOpen={chatOpen}
+          onClose={() => setChatOpen(false)}
+          userId={userId}
+          onTasksChanged={fetchTasks}
+        />
+      )}
     </div>
   );
 }
