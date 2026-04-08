@@ -1,8 +1,8 @@
 # Project Progress — The Evolution of Todo
 
 **Last Updated**: 2026-04-08
-**Current Phase**: Phase III — AI-Powered Todo Chatbot (Cycle 1 COMPLETE)
-**Next Action**: Phase III Cycle 2 — AI Agent + Chat Endpoint
+**Current Phase**: Phase III — AI-Powered Todo Chatbot (Cycle 2 COMPLETE)
+**Next Action**: Phase III Cycle 3 — ChatKit Frontend
 
 ---
 
@@ -248,38 +248,44 @@ tests/backend/
 
 ---
 
-### Cycle 2: AI Agent + Chat Endpoint (T-050 → T-058) — IN PROGRESS
+### Cycle 2: AI Agent + Chat Endpoint (T-050 → T-060) — COMPLETE ✅
 
 **Branch**: `002-ai-chat-endpoint`
-**SDD progress**: /sp.specify ✅ | /sp.plan ✅ (partially — artifacts created) | /sp.adr PENDING | /sp.tasks PENDING | /sp.implement PENDING
+**SDD progress**: /sp.specify ✅ | /sp.plan ✅ | /sp.adr ✅ | /sp.tasks ✅ (11/11 tasks done) | /sp.analyze ✅ | /sp.implement ✅
+**ADR**: ADR-006 — Stateless Chat Architecture
 
-**SDD artifacts created:**
+**Files created:**
 ```
-specs/002-ai-chat-endpoint/
-├── spec.md              ✅ (4 user stories, 14 FRs, 6 SCs)
-├── plan.md              ✅ (4 components, 4 design decisions)
-├── research.md          ✅ (5 research items resolved)
-├── data-model.md        ✅ (Conversation + Message entities)
-├── quickstart.md        ✅
-├── contracts/chat-api.md ✅ (POST /api/{user_id}/chat)
-├── checklists/requirements.md ✅ (all pass)
-└── tasks.md             ❌ NOT YET CREATED
+backend/
+├── agent.py             ← AI agent: SYSTEM_PROMPT, run_agent (tool-calling loop), fallback
+└── routes/
+    └── chat.py          ← POST /api/{user_id}/chat (stateless, DB-backed)
+
+tests/backend/
+└── test_chat.py         ← 15 tests (6 classes: Model, Endpoint, ToolCalling, Persistence, Errors, ToolSelection)
 ```
 
-**Resume exact steps:**
-1. `git checkout 002-ai-chat-endpoint`
-2. Run `/sp.adr` for ADR-006 (Stateless Chat Architecture)
-3. Run `/sp.tasks` to generate task breakdown
-4. Run `/sp.analyze` to verify consistency
-5. Run `/sp.implement` to build it
-6. Key: OpenAI API key NOT available — build with mocks, add key to .env later
-7. New dep needed: `openai` package in backend/pyproject.toml
-8. Files to create: backend/agent.py, backend/routes/chat.py, tests/backend/test_chat.py
-9. Files to modify: backend/models.py (add Conversation, Message), backend/main.py (register router)
+**Files modified:**
+```
+backend/
+├── pyproject.toml       ← Added openai dependency
+├── models.py            ← Added Conversation + Message SQLModel tables
+└── main.py              ← Registered chat router
+```
+
+**Tests**: 15 chat + 21 MCP + 11 auth + 20 API + 32 Phase 1 = **99 total tests passing**
+**Key details**:
+- Stateless endpoint: all context from DB, zero server-side state
+- OpenAI base SDK (not Agents SDK) — justified in ADR-006
+- Tool-calling loop: call → check tool_calls → execute via MCP dispatcher → repeat
+- 50-message history cap (configurable MAX_HISTORY_MESSAGES)
+- Graceful degradation without API key (returns fallback message)
+- User ownership isolation on conversations
+- All tests mock OpenAI client — no API key needed
 
 ---
 
-### Cycle 3: ChatKit Frontend (T-059 → T-065) — PENDING
+### Cycle 3: ChatKit Frontend (T-061 → T-070) — PENDING
 
 ---
 
@@ -287,20 +293,17 @@ specs/002-ai-chat-endpoint/
 
 ```
 Read progress.md first, then:
-1. Phase III Cycle 1 COMPLETE — MCP tools implemented + tested + pushed
-2. Phase III Cycle 2 IN PROGRESS — spec + plan + research done, needs /sp.adr → /sp.tasks → /sp.implement
-3. BRANCH: git checkout 002-ai-chat-endpoint
-4. NEXT CMD: /sp.adr "Stateless Chat Architecture" (then /sp.tasks, /sp.analyze, /sp.implement)
-5. Spec at: specs/002-ai-chat-endpoint/spec.md (4 stories, 14 FRs)
-6. Plan at: specs/002-ai-chat-endpoint/plan.md (4 components, 4 decisions)
-7. MCP tools ready at: backend/mcp/ (from Cycle 1)
-8. Tests: 84 total passing (21 MCP + 11 auth + 20 API + 32 Phase 1)
-9. OpenAI API key NOT available — build with mocks, key added to .env later
-10. New dep: openai package needed in backend/pyproject.toml
-11. Files to CREATE: backend/agent.py, backend/routes/chat.py, tests/backend/test_chat.py
-12. Files to MODIFY: backend/models.py (Conversation+Message), backend/main.py (register router)
-13. 6 reusable skills (5 Phase II + mcp-server-builder)
-14. GitHub: https://github.com/hassam-rauf/Hackathon_II-Todo_App-
+1. Phase III Cycle 1 COMPLETE — MCP tools implemented + tested
+2. Phase III Cycle 2 COMPLETE — AI agent + chat endpoint implemented + tested (99 total tests)
+3. NEXT: Phase III Cycle 3 — ChatKit Frontend (chat UI)
+4. BRANCH: create new branch from 002-ai-chat-endpoint
+5. Backend chat endpoint ready: POST /api/{user_id}/chat
+6. Agent module at: backend/agent.py (tool-calling loop, fallback)
+7. MCP tools at: backend/mcp/ (5 tools)
+8. Tests: 99 total passing (15 chat + 21 MCP + 11 auth + 20 API + 32 Phase 1)
+9. OpenAI API key NOT available — agent returns fallback, tests mock everything
+10. 6 reusable skills (5 Phase II + mcp-server-builder)
+11. GitHub: https://github.com/hassam-rauf/Hackathon_II-Todo_App-
 ```
 
 ---

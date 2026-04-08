@@ -12,6 +12,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.db import init_db
+from backend.routes.chat import router as chat_router
 from backend.routes.tasks import router as tasks_router
 
 load_dotenv()
@@ -42,6 +43,7 @@ app.add_middleware(
 
 # Register routes
 app.include_router(tasks_router)
+app.include_router(chat_router)
 
 
 @app.get("/health")
