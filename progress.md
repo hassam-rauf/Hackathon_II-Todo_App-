@@ -1,8 +1,8 @@
 # Project Progress — The Evolution of Todo
 
-**Last Updated**: 2026-04-07
-**Current Phase**: Phase II — UI Redesign (Space Theme) COMPLETE
-**Next Action**: Phase III — AI-Powered Todo Chatbot
+**Last Updated**: 2026-04-08
+**Current Phase**: Phase III — AI-Powered Todo Chatbot (Cycle 1 COMPLETE)
+**Next Action**: Phase III Cycle 2 — AI Agent + Chat Endpoint
 
 ---
 
@@ -29,6 +29,7 @@ Run: `uv run pytest tests/phase1/` — all 32 tests pass
 | 3 | `.claude/skills/database-sqlmodel-builder/` | ✅ | ✅ |
 | 4 | `.claude/skills/auth-builder/` | ✅ | ✅ |
 | 5 | `.claude/skills/glassmorphism-todo-ui/` | ✅ | ✅ |
+| 6 | `.claude/skills/mcp-server-builder/` | ✅ | ✅ |
 
 ---
 
@@ -208,20 +209,98 @@ frontend/
 
 ---
 
+## Phase III SDD Cycles
+
+### Cycle 1: MCP Server + Tools (T-042 → T-049) — COMPLETE ✅
+
+**SDD artifacts**: spec.md ✅ | plan.md ✅ | tasks.md ✅ (19/19 tasks done)
+**Path**: `specs/001-mcp-server-tools/`
+**Branch**: `001-mcp-server-tools`
+**ADR**: ADR-005 — MCP Protocol for AI-Tool Interface
+
+**Files created:**
+```
+backend/mcp/
+├── __init__.py        ← Package init, exports TOOL_SCHEMAS, execute_tool, process_tool_calls
+├── schemas.py         ← 5 tool schemas in OpenAI function calling format
+├── tools.py           ← 5 tool implementations (add, list, complete, delete, update)
+└── dispatcher.py      ← Central dispatcher (execute_tool, process_tool_calls)
+
+tests/backend/
+└── test_mcp_tools.py  ← 21 tests (7 classes: AddTask, ListTasks, CompleteTask, DeleteTask, UpdateTask, Dispatcher, UserIsolation)
+
+.claude/skills/mcp-server-builder/
+├── SKILL.md           ← MCP server builder skill
+└── references/patterns.md
+```
+
+**Tests**: 21 MCP + 11 auth + 20 API + 32 Phase 1 = **84 total tests passing**
+**Key details**:
+- In-process tools (no separate MCP server process)
+- OpenAI function calling format for schemas
+- Structured dict returns with status + message
+- User ownership isolation (violation = "not found")
+- Idempotent complete_task
+- Central dispatcher with try/except safety net
+- No existing files modified (pure additive)
+
+**Commit**: `feat: Phase III Cycle 1 — MCP Server + Tools (T-042 → T-049)` (23 files, 2,433 lines)
+
+---
+
+### Cycle 2: AI Agent + Chat Endpoint (T-050 → T-058) — IN PROGRESS
+
+**Branch**: `002-ai-chat-endpoint`
+**SDD progress**: /sp.specify ✅ | /sp.plan ✅ (partially — artifacts created) | /sp.adr PENDING | /sp.tasks PENDING | /sp.implement PENDING
+
+**SDD artifacts created:**
+```
+specs/002-ai-chat-endpoint/
+├── spec.md              ✅ (4 user stories, 14 FRs, 6 SCs)
+├── plan.md              ✅ (4 components, 4 design decisions)
+├── research.md          ✅ (5 research items resolved)
+├── data-model.md        ✅ (Conversation + Message entities)
+├── quickstart.md        ✅
+├── contracts/chat-api.md ✅ (POST /api/{user_id}/chat)
+├── checklists/requirements.md ✅ (all pass)
+└── tasks.md             ❌ NOT YET CREATED
+```
+
+**Resume exact steps:**
+1. `git checkout 002-ai-chat-endpoint`
+2. Run `/sp.adr` for ADR-006 (Stateless Chat Architecture)
+3. Run `/sp.tasks` to generate task breakdown
+4. Run `/sp.analyze` to verify consistency
+5. Run `/sp.implement` to build it
+6. Key: OpenAI API key NOT available — build with mocks, add key to .env later
+7. New dep needed: `openai` package in backend/pyproject.toml
+8. Files to create: backend/agent.py, backend/routes/chat.py, tests/backend/test_chat.py
+9. Files to modify: backend/models.py (add Conversation, Message), backend/main.py (register router)
+
+---
+
+### Cycle 3: ChatKit Frontend (T-059 → T-065) — PENDING
+
+---
+
 ## Resume Instructions for New Session
 
 ```
 Read progress.md first, then:
-1. Phase II FULLY COMPLETE — all 5 cycles done (API, UI, Auth, Glassmorphism, Space Theme)
-2. Next: Phase III — AI-Powered Todo Chatbot (see AGENT.md Section 16)
-3. Both servers: backend on :8000 (run from project root), frontend on :3000
-4. Neon DB connected (SSL, no channel_binding)
-5. Auth uses EdDSA/JWKS — backend/auth.py fetches JWKS from frontend
-6. Routes: / (landing), /signin, /signup, /dashboard (protected)
-7. 5 reusable skills created (4 Phase II + glassmorphism-todo-ui)
-8. GitHub repo: https://github.com/hassam-rauf/Hackathon_II-Todo_App-
-9. UI theme: Dark space/galaxy with stars, nebula glows, dark glassmorphism
-10. Backend run cmd: uv run uvicorn backend.main:app --reload (from project root)
+1. Phase III Cycle 1 COMPLETE — MCP tools implemented + tested + pushed
+2. Phase III Cycle 2 IN PROGRESS — spec + plan + research done, needs /sp.adr → /sp.tasks → /sp.implement
+3. BRANCH: git checkout 002-ai-chat-endpoint
+4. NEXT CMD: /sp.adr "Stateless Chat Architecture" (then /sp.tasks, /sp.analyze, /sp.implement)
+5. Spec at: specs/002-ai-chat-endpoint/spec.md (4 stories, 14 FRs)
+6. Plan at: specs/002-ai-chat-endpoint/plan.md (4 components, 4 decisions)
+7. MCP tools ready at: backend/mcp/ (from Cycle 1)
+8. Tests: 84 total passing (21 MCP + 11 auth + 20 API + 32 Phase 1)
+9. OpenAI API key NOT available — build with mocks, key added to .env later
+10. New dep: openai package needed in backend/pyproject.toml
+11. Files to CREATE: backend/agent.py, backend/routes/chat.py, tests/backend/test_chat.py
+12. Files to MODIFY: backend/models.py (Conversation+Message), backend/main.py (register router)
+13. 6 reusable skills (5 Phase II + mcp-server-builder)
+14. GitHub: https://github.com/hassam-rauf/Hackathon_II-Todo_App-
 ```
 
 ---
