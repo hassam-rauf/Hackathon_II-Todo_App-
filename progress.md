@@ -1,8 +1,8 @@
 # Project Progress — The Evolution of Todo
 
-**Last Updated**: 2026-04-07
-**Current Phase**: Phase II — UI Redesign (Space Theme) COMPLETE
-**Next Action**: Phase III — AI-Powered Todo Chatbot
+**Last Updated**: 2026-04-09
+**Current Phase**: Phase III — COMPLETE
+**Next Action**: Phase IV — Kubernetes Deployment (if proceeding)
 
 ---
 
@@ -28,7 +28,6 @@ Run: `uv run pytest tests/phase1/` — all 32 tests pass
 | 2 | `.claude/skills/fastapi-backend-builder/` | ✅ | ✅ |
 | 3 | `.claude/skills/database-sqlmodel-builder/` | ✅ | ✅ |
 | 4 | `.claude/skills/auth-builder/` | ✅ | ✅ |
-| 5 | `.claude/skills/glassmorphism-todo-ui/` | ✅ | ✅ |
 
 ---
 
@@ -128,83 +127,90 @@ tests/backend/
 └── test_tasks_api.py        ← Updated: get_current_user mock in fixtures
 ```
 
-**Tests**: 11 auth + 20 task API + 32 Phase 1 = **63 total tests passing**
+**Tests**: 36/36 backend passing + 32 Phase 1 = **68 total tests**
 **Build**: `npx next build` — compiles successfully
-**Auth flow**: signup → signin → cookie session → JWT token (EdDSA via JWKS) → backend verification
-**Key fixes applied in session**:
-- Better Auth requires `pg.Pool` object (not `{url, type}` config)
-- Removed `channel_binding=require` from DATABASE_URL (incompatible with pg driver)
-- JWT algorithm mismatch fixed: Better Auth uses EdDSA/JWKS, not HS256/shared secret
-- Rewrote `backend/auth.py` to use `PyJWKClient` fetching JWKS from frontend
-- Used `window.location.href` instead of `router.push()` after signin (full reload for cookie sync)
-- Manually created all 6 Neon DB tables (user, session, account, verification, jwks, task)
+**Key**: AUTH_SECRET shared via .env files, HS256 JWT, Better Auth v1.5.6
 
 ---
 
-### Cycle 4: UI Upgrade — Glassmorphism Redesign — COMPLETE ✅
+## Phase III: AI-Powered Todo Chatbot — COMPLETE ✅
 
-**Design decisions** (user-approved 2026-04-06):
-- **Style**: Modern Glassmorphism — gradient backgrounds, frosted glass cards, backdrop-blur
-- **Colors**: Blue → Indigo gradient (blue-600 to indigo-600)
-- **Landing**: Public landing page at `/` (hero + features + CTA)
-- **Dashboard**: Authenticated at `/dashboard` with stats overview (total, completed, pending, rate)
-- **Auth pages**: Glassmorphism frosted cards on gradient background
+### Cycle 1: MCP Server + Tools (T-042 → T-049) — COMPLETE ✅
 
-**Verified working (2026-04-06):**
-- Full auth flow: signup → signin → dashboard → add/edit/delete tasks
+**SDD artifacts**: spec.md ✅ | plan.md ✅ | tasks.md ✅
+**Path**: `specs/001-mcp-server-tools/`
+
+**MCP files created:**
+```
+backend/mcp/
+├── __init__.py       ← Exports: TOOL_SCHEMAS, execute_tool, process_tool_calls, mcp_server
+├── schemas.py        ← OpenAI function calling format schemas (5 tools)
+├── tools.py          ← Core tool implementations (add, list, complete, delete, update)
+├── dispatcher.py     ← Routes tool calls by name to functions
+└── server.py         ← Official MCP SDK: FastMCP + @mcp_server.tool() decorators
+```
+
+**Tests**: `tests/backend/test_mcp_tools.py` — 17 tests (5 classes)
+**Key**: Official MCP SDK (`mcp` v1.27.0), FastMCP server, user isolation
 
 ---
 
-### Cycle 5: UI Redesign — Dark Space/Galaxy Theme — COMPLETE ✅
+### Cycle 2: AI Agent + Chat Endpoint (T-050 → T-060) — COMPLETE ✅
 
-**Design decisions** (user-approved 2026-04-07):
-- **Style**: Dark space/galaxy theme — star-filled backgrounds, nebula glows, dark glassmorphism cards
-- **Colors**: Deep space dark (#0a0a1a), purple/violet nebula accents, emerald green CTAs
-- **Landing**: Space background, laptop mockup with dashboard preview, "Organize your life. Focus on what matters." hero
-- **Dashboard**: Sidebar navigation (Dashboard/My Todos/Settings), 3-stat bar, productivity chart, quick notes widget
-- **Auth pages**: Dark glass cards on space background, emerald buttons, purple accent links
+**SDD artifacts**: spec.md ✅ | plan.md ✅ | tasks.md ✅
+**Path**: `specs/002-ai-chat-endpoint/`
 
-**Completed tasks:**
-| # | Task | Status |
-|---|------|--------|
-| 1 | Redesign globals.css with space theme (stars, nebula, glass utilities) | ✅ Done |
-| 2 | Redesign landing page with laptop mockup + green CTA | ✅ Done |
-| 3 | Redesign dashboard with sidebar + productivity chart | ✅ Done |
-| 4 | Create ProductivityChart component (circular progress ring) | ✅ Done |
-| 5 | Redesign sign-in/sign-up pages for space theme | ✅ Done |
-| 6 | Update all components (TaskCard, TaskForm, StatsBar, EmptyState) for dark theme | ✅ Done |
-| 7 | Update loading.tsx and error.tsx for dark theme | ✅ Done |
+**Agent/Chat files created:**
+```
+backend/
+├── agent.py          ← OpenAI Agents SDK: Agent + Runner.run_sync + @function_tool
+├── models.py         ← Updated: Conversation + Message models
+└── routes/
+    ├── chat.py       ← POST /api/{user_id}/chat (stateless endpoint)
+    └── conversations.py  ← GET conversations + messages endpoints
+```
 
-**Route structure (unchanged):**
-- `/` → Public landing page (space bg, hero, laptop mockup, features, green CTA)
-- `/signin` → Dark glass sign-in (space bg, emerald button)
-- `/signup` → Dark glass sign-up (space bg, emerald button)
-- `/dashboard` → Authenticated dashboard (sidebar, stats, tasks, productivity chart, quick notes)
-- `middleware.ts` → Redirects: `/dashboard` → `/signin` if no auth; `/signin|/signup` → `/dashboard` if already auth
+**Tests**: `tests/backend/test_chat.py` — 15 tests (5 classes), `tests/backend/test_conversations.py` — 7 tests
+**Key**: OpenAI Agents SDK (`openai-agents` v0.13.5), RunContextWrapper[AgentContext] pattern, gpt-4o-mini
 
-**Files created/modified:**
+---
+
+### Cycle 3: ChatKit Frontend (T-061 → T-075) — COMPLETE ✅
+
+**SDD artifacts**: spec.md ✅ | plan.md ✅ | tasks.md ✅
+**Path**: `specs/003-chatkit-frontend/`
+
+**Frontend files created:**
 ```
 frontend/
-├── app/globals.css           ← REWRITTEN → space-bg, stars, glass-card, glass-input, sidebar-item, circular-progress
-├── app/page.tsx              ← REWRITTEN → space theme landing with laptop mockup
-├── app/dashboard/page.tsx    ← REWRITTEN → sidebar layout + productivity chart + quick notes
-├── app/signin/page.tsx       ← REWRITTEN → dark space theme
-├── app/signup/page.tsx       ← REWRITTEN → dark space theme
-├── app/loading.tsx           ← UPDATED → space-bg spinner
-├── app/error.tsx             ← UPDATED → space-bg error boundary
-├── components/ProductivityChart.tsx  ← NEW → circular progress ring with gradient + legend
-├── components/StatsBar.tsx   ← REWRITTEN → dark glass stat cards with icons
-├── components/TaskCard.tsx   ← REWRITTEN → dark glass card, emerald checkbox, purple edit
-├── components/TaskForm.tsx   ← REWRITTEN → glass-input, emerald "+ New Task" button
-├── components/EmptyState.tsx ← REWRITTEN → dark theme empty state
-└── components/TaskList.tsx   ← No changes (wrapper only)
+├── components/
+│   ├── ChatPanel.tsx              ← Custom slide-in panel (primary UI)
+│   ├── ChatMessages.tsx           ← Message bubbles + tool chips + typing dots
+│   ├── ChatInput.tsx              ← Textarea + send with Enter/Shift+Enter
+│   ├── ChatConversationSelector.tsx ← Conversation history dropdown
+│   ├── ToolCallChip.tsx           ← Per-tool icon chips
+│   └── ChatKitPanel.tsx           ← OpenAI ChatKit Web Component wrapper
+├── lib/api.ts                     ← Updated: sendChatMessage, getConversations, getMessages
+├── app/globals.css                ← Slide-in animations, chat bubbles, tool chips CSS
+├── app/dashboard/page.tsx         ← AI Chat sidebar button, FAB, panel integration
+└── package.json                   ← Added: @openai/chatkit v1.6.0
 ```
 
-**Build**: `npx next build` — compiles successfully (Turbopack, 0 errors)
+**Build**: `npx next build` — compiles successfully
+**Key**: OpenAI ChatKit (`@openai/chatkit` v1.6.0), CustomApiConfig types, dark theme
 
-**Git**: Initial commit pushed to GitHub (2026-04-07)
-- Repo: https://github.com/hassam-rauf/Hackathon_II-Todo_App-
-- Commit: `feat: Complete Phase I + Phase II` (125 files, 27,443 lines)
+---
+
+### SDK Integration Summary
+
+| SDK | Package | Version | Integration |
+|-----|---------|---------|-------------|
+| OpenAI Agents SDK | `openai-agents` | v0.13.5 | `Agent`, `Runner.run_sync`, `@function_tool`, `RunContextWrapper[T]` |
+| Official MCP SDK | `mcp` | v1.27.0 | `FastMCP`, `@mcp_server.tool()` decorators |
+| OpenAI ChatKit | `@openai/chatkit` | v1.6.0 | Web Component types, `CustomApiConfig`, `ChatKitOptions` |
+
+**Total Backend Tests**: 78 passing
+**Frontend Build**: Compiles successfully
 
 ---
 
@@ -212,16 +218,10 @@ frontend/
 
 ```
 Read progress.md first, then:
-1. Phase II FULLY COMPLETE — all 5 cycles done (API, UI, Auth, Glassmorphism, Space Theme)
-2. Next: Phase III — AI-Powered Todo Chatbot (see AGENT.md Section 16)
-3. Both servers: backend on :8000 (run from project root), frontend on :3000
-4. Neon DB connected (SSL, no channel_binding)
-5. Auth uses EdDSA/JWKS — backend/auth.py fetches JWKS from frontend
-6. Routes: / (landing), /signin, /signup, /dashboard (protected)
-7. 5 reusable skills created (4 Phase II + glassmorphism-todo-ui)
-8. GitHub repo: https://github.com/hassam-rauf/Hackathon_II-Todo_App-
-9. UI theme: Dark space/galaxy with stars, nebula glows, dark glassmorphism
-10. Backend run cmd: uv run uvicorn backend.main:app --reload (from project root)
+1. Phase III is COMPLETE — all 3 cycles + SDK integration done
+2. All 78 backend tests pass, frontend builds clean
+3. NOTE: DATABASE_URL in .env files needs real Neon credentials for deployment
+4. NOTE: OPENAI_API_KEY needed for live agent functionality
 ```
 
 ---
@@ -231,24 +231,11 @@ Read progress.md first, then:
 | Priority | File | Why |
 |----------|------|-----|
 | 1 | `progress.md` (this file) | Current state and next action |
-| 2 | `AGENT.md` | Master blueprint — Section 16 for Phase III |
-| 3 | `frontend/lib/auth.ts` | Better Auth config (pg.Pool, EdDSA JWT plugin) |
-| 4 | `backend/auth.py` | JWKS-based JWT verification (EdDSA, PyJWKClient) |
-| 5 | `frontend/lib/auth-client.ts` | Client auth hooks (jwtClient plugin) |
-| 6 | `frontend/lib/api.ts` | API client with Bearer token injection |
-| 7 | `frontend/app/page.tsx` | Public landing page |
-| 8 | `frontend/app/dashboard/page.tsx` | Authenticated dashboard |
-| 9 | `frontend/middleware.ts` | Auth route protection |
-
----
-
-## Neon Database Config
-
-- **Provider**: Neon Serverless PostgreSQL
-- **Connection**: `sslmode=require` (no `channel_binding`)
-- **Driver**: `pg` Node.js (frontend), `psycopg2-binary` (backend tests use SQLite)
-- **Tables**: `user`, `session`, `account`, `verification`, `jwks` (Better Auth) + `task` (app)
-- **next.config.ts**: `serverExternalPackages: ["ws", "@neondatabase/serverless", "pg"]`
+| 2 | `backend/agent.py` | AI agent (Agents SDK integration) |
+| 3 | `backend/mcp/server.py` | MCP server (Official MCP SDK) |
+| 4 | `frontend/components/ChatKitPanel.tsx` | ChatKit Web Component wrapper |
+| 5 | `frontend/components/ChatPanel.tsx` | Custom chat UI (primary working panel) |
+| 6 | `backend/routes/chat.py` | Chat endpoint |
 
 ---
 
@@ -259,8 +246,8 @@ Read progress.md first, then:
 - `.specify/memory/constitution.md` — 8 principles (v1.0.0)
 - `explain.md` — Tech stack explained in Roman Urdu
 - `pyproject.toml` — Root UV config (workspace with backend)
-- `backend/pyproject.toml` — Backend dependencies (pyjwt[crypto], fastapi, sqlmodel)
-- `frontend/package.json` — Frontend dependencies (better-auth, pg, ws)
+- `backend/pyproject.toml` — Backend dependencies
+- `frontend/package.json` — Frontend dependencies
 - `.gitignore` — Python, Node, env, IDE ignores
 - `requirement.md` — Original hackathon requirements
 
@@ -272,10 +259,60 @@ Read progress.md first, then:
   - `rm -rf node_modules` may fail → use `cmd.exe /c "rmdir /s /q node_modules"` instead
   - npm install permission errors (EACCES) → run from Windows CMD if WSL fails
   - UV hardlink warnings → set `UV_LINK_MODE=copy` if needed
-  - Turbopack first compile ~60s on NTFS mount (normal)
-  - Bracket directories `[...all]` may create escaped duplicates `\[...all\]` — delete the escaped one
 - `@next/swc-linux-x64-gnu` needed manual install (download timeout)
 - All Python tools work fine via UV in WSL
+
+---
+
+## Session Log — 2026-04-08
+
+### SDK Gap Fix Session
+
+**Goal**: Fill 3 SDK gaps identified in hackathon requirements audit.
+
+**Completed:**
+1. **OpenAI Agents SDK** — Rewrote `backend/agent.py` from raw OpenAI client to `Agent` + `Runner.run_sync` + `@function_tool` + `RunContextWrapper[AgentContext]`
+2. **Official MCP SDK** — Created `backend/mcp/server.py` with `FastMCP` + `@mcp_server.tool()` decorators for all 5 tools
+3. **OpenAI ChatKit** — Installed `@openai/chatkit` v1.6.0, created `ChatKitPanel.tsx` wrapper with `CustomApiConfig`, dark theme, starter prompts
+4. **Test Migration** — Updated `tests/backend/test_chat.py` from `@patch("backend.agent.OpenAI")` to `@patch("backend.agent.Runner")` — all 15 tests pass
+5. **Progress Update** — Updated this file with complete Phase III documentation
+
+**Verification:**
+- `uv run pytest tests/backend/ -v` → **78/78 tests pass**
+- `npx next build` → **compiles successfully**
+
+---
+
+## Session Log — 2026-04-09
+
+### Phase III Requirement Audit & Gap Fix Session
+
+**Goal**: Deep audit of Phase III against requirements, fix all remaining gaps.
+
+**Gaps Found & Fixed:**
+
+1. **ChatKitPanel not rendered** — Was imported but never used in dashboard JSX. Fixed: replaced `ChatPanel` with `ChatKitPanel` as primary chat UI in `dashboard/page.tsx` (requirement: "Frontend: OpenAI ChatKit").
+
+2. **Agent not routed through MCP** — Agent's `@function_tool` called `mcp/tools.py` directly, bypassing MCP layer. Fixed: restructured `agent.py` to route all tool calls through `execute_tool` (MCP dispatcher). Mounted MCP server at `/mcp` in `main.py` via `mcp_server.streamable_http_app()`. Architecture now matches requirement: Agent → MCP dispatcher → MCP tools → DB.
+
+3. **No database migrations** — Requirement deliverables list "Database migration scripts". Fixed: added `alembic` dependency, initialized Alembic in `backend/`, configured `env.py` with `DATABASE_URL` + SQLModel metadata, generated initial migration for Task, Conversation, Message tables.
+
+4. **Empty README** — Requirement says "README with setup instructions". Fixed: wrote comprehensive `README.md` with tech stack, project structure, prerequisites, step-by-step setup, env vars, API endpoints, MCP server docs, architecture, test/build commands, and phase summary.
+
+**Files Changed:**
+- `frontend/app/dashboard/page.tsx` — ChatKitPanel as primary UI
+- `backend/agent.py` — Routes through MCP dispatcher (`execute_tool`)
+- `backend/main.py` — Mounted MCP server at `/mcp`
+- `backend/pyproject.toml` — Added `alembic>=1.15.0`
+- `backend/alembic.ini` — Alembic config (DATABASE_URL from env)
+- `backend/alembic/env.py` — SQLModel metadata + model imports
+- `backend/alembic/versions/6613add75af6_initial_schema_*.py` — Initial migration
+- `README.md` — Complete setup instructions
+
+**Verification:**
+- `uv run pytest tests/backend/ -v` → **78/78 tests pass**
+- `npx next build` → **compiles successfully**
+- All Phase III requirements verified line-by-line against `requirement.md`
 
 ---
 
@@ -286,4 +323,3 @@ Read progress.md first, then:
 - skill-creator-pro used for reusable skills (+200 bonus points)
 - Phase-by-phase, no skipping
 - Save progress before closing sessions
-- UI style preference: Dark space/galaxy theme (redesigned from glassmorphism 2026-04-07)

@@ -28,6 +28,36 @@ export interface TaskUpdate {
   description?: string;
 }
 
+/** A single tool call from the AI agent response. */
+export interface ToolCall {
+  tool: string;
+  args: Record<string, unknown>;
+  result: Record<string, unknown>;
+}
+
+/** A chat message in the UI thread. */
+export interface ChatMessage {
+  id: number | string;
+  role: "user" | "assistant";
+  content: string;
+  toolCalls?: ToolCall[];
+  createdAt: string;
+}
+
+/** A conversation summary for the selector dropdown. */
+export interface ChatConversation {
+  id: number;
+  preview: string;
+  updatedAt: string;
+}
+
+/** Response from POST /api/{user_id}/chat. */
+export interface ChatResponse {
+  conversation_id: number;
+  response: string;
+  tool_calls: ToolCall[];
+}
+
 async function getAuthHeaders(): Promise<Record<string, string>> {
   try {
     const result = await authClient.token();
@@ -86,4 +116,37 @@ export const api = {
 
   toggleComplete: (userId: string, taskId: number): Promise<Task> =>
     request(`/api/${userId}/tasks/${taskId}/complete`, { method: "PATCH" }),
+
+  // Chat API — Task: T005
+  sendChatMessage: (
+    userId: string,
+    message: string,
+    conversationId?: number,
+  ): Promise<ChatResponse> =>
+    request(`/api/${userId}/chat`, {
+      method: "POST",
+      body: JSON.stringify({
+        message,
+        ...(conversationId != null ? { conversation_id: conversationId } : {}),
+      }),
+    }),
+
+  getConversations: (userId: string): Promise<ChatConversation[]> =>
+    request<{ id: number; preview: string; updated_at: string }[]>(
+      `/api/${userId}/conversations`,
+    ).then((data) =>
+      data.map((c) => ({ id: c.id, preview: c.preview, updatedAt: c.updated_at })),
+    ),
+
+  getMessages: (userId: string, conversationId: number): Promise<ChatMessage[]> =>
+    request<{ id: number; role: string; content: string; created_at: string }[]>(
+      `/api/${userId}/conversations/${conversationId}/messages`,
+    ).then((data) =>
+      data.map((m) => ({
+        id: m.id,
+        role: m.role as "user" | "assistant",
+        content: m.content,
+        createdAt: m.created_at,
+      })),
+    ),
 };

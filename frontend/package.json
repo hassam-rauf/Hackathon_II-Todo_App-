@@ -11,6 +11,7 @@
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
     "@next/swc-linux-x64-gnu": "^16.2.1",
+    "@openai/chatkit": "^1.6.0",
     "better-auth": "^1.5.6",
     "next": "16.2.1",
     "pg": "^8.20.0",
