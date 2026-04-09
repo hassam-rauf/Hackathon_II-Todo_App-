@@ -12,6 +12,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.db import init_db
+from backend.mcp import mcp_server
 from backend.routes.chat import router as chat_router
 from backend.routes.conversations import router as conversations_router
 from backend.routes.tasks import router as tasks_router
@@ -46,6 +47,9 @@ app.add_middleware(
 app.include_router(tasks_router)
 app.include_router(chat_router)
 app.include_router(conversations_router)
+
+# Mount MCP server (Official MCP SDK — FastMCP) for external tool access
+app.mount("/mcp", mcp_server.streamable_http_app())
 
 
 @app.get("/health")

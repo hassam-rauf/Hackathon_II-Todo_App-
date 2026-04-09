@@ -13,7 +13,7 @@ import TaskForm from "@/components/TaskForm";
 import TaskList from "@/components/TaskList";
 import StatsBar from "@/components/StatsBar";
 import ProductivityChart from "@/components/ProductivityChart";
-import ChatPanel from "@/components/ChatPanel";
+import ChatKitPanel from "@/components/ChatKitPanel";
 
 export default function DashboardPage() {
   const { data: session, isPending } = useAuth();
@@ -320,9 +320,9 @@ export default function DashboardPage() {
         </button>
       )}
 
-      {/* Chat Panel */}
+      {/* ChatKit Panel — OpenAI ChatKit Web Component (primary UI per requirement) */}
       {userId && (
-        <ChatPanel
+        <ChatKitPanel
           isOpen={chatOpen}
           onClose={() => setChatOpen(false)}
           userId={userId}
