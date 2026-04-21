@@ -5,6 +5,8 @@ description = "The Evolution of Todo — From CLI to Cloud-Native AI System"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "mcp>=1.27.0",
+    "openai-agents>=0.13.5",
     "pyjwt[crypto]>=2.12.1",
 ]
 
